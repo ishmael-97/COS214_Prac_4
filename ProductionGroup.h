@@ -11,8 +11,15 @@
 // dependency header
 #include "ProductionIterator.h"
 
+// foward declaration for access into children of ProductionGroup
+class ProductionIterator;
+class FullIterator;
+
 // Abstract Class
 class ProductionGroup : public ProductionUnit {
+    // We want to acces chidren when traversing using full iterator
+    friend class FullIterator;
+
     public:
         ProductionGroup(const std::string& name);
         void add(ProductionUnit* unit);
