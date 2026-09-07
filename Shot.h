@@ -11,7 +11,17 @@ class Shot : public ProductionUnit {
         std::string getName() const override;
         std::string getStatus() const override;
         bool isUrgent() const override;
+
+         // Lifecycle transitions, delegated to the current ShotState
+        void advance();
+        void reject();
+
+        //Called by ShotState subclasses to change this shot's current state.
+        // Shot owns its state and is responsible for deleting the old one.
+        void setState(ShotState* newState);
+        
         virtual ~Shot();
+
         
     private:
         std::string name;
