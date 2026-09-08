@@ -86,3 +86,6 @@ Sequence::Sequence(const std::string& name) : ProductionGroup(name) {}
 // #3 
 Scene::Scene(const std::string& name) : ProductionGroup(name) {}
 
+void ProductionGroup::execute() {
+    return;
+}

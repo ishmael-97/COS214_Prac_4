@@ -17,6 +17,7 @@ bool Shot::isUrgent() const {
 
 void Shot::execute() {
     std::cout << "Filming shot \"" << name << "\" (" << state->getName() << ")" << std::endl;
+    std::cout << "Logging shot \"" << name << "\" in the production diary" << std::endl;
 }
 
 void Shot::advance() {
