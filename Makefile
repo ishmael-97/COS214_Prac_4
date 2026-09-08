@@ -1,22 +1,18 @@
-CXX = g++
-CXXFLAGS = -g -std=c++11
-toComp = $(wildcard *.cpp)
-toDel = taskforge
+CXX := g++
+CXXFLAGS := -std=c++11 -Wall -Wextra -g
+TARGET := taskforge
+SRCS := $(wildcard *.cpp)
+OBJS := $(SRCS:.cpp=.o)
 
-.PHONY: all compile run clean valgrind
+.PHONY: all clean
 
-all: compile run
-	@echo "Cleaning up..."
-	@$(MAKE) clean
+all: $(TARGET)
 
-compile:
-	@$(CXX) $(CXXFLAGS) $(toComp) -o $(toDel)
+$(TARGET): $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS)
 
-run: compile
-	@./$(toDel)
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	@rm -f *.o *.gcov *.gcda *.gcno *.gz *.json *.html *.css output.txt coverage.txt valgrind.txt $(toDel)
-
-valgrind: clean compile
-	@valgrind --leak-check=full ./$(toDel)
+	rm -f $(OBJS) $(TARGET)
