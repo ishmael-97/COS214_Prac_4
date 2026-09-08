@@ -6,12 +6,15 @@
 #include "InsuranceDecorator.h"
 #include <iostream>
 
-void printAll(ProductionIterator* it, const std::string& label) {
+int printAll(ProductionIterator* it, const std::string& label) {
     std::cout << "--- " << label << " ---" << std::endl;
+    int count = 0;
     for (it->first(); !it->isDone(); it->next()) {
         ProductionUnit* unit = it->currentItem();
         std::cout << unit->getStatus() << (unit->isUrgent() ? "  (URGENT)" : "") << std::endl;
+        count++;
     }
+    return count;
 }
 
 int main() {
@@ -22,14 +25,12 @@ int main() {
     Scene* scene2 = new Scene("Car Chase Scene");
 
     Shot* shotA = new Shot("Wide establishing shot");
-    Shot* shotB = new Shot("Close-up on hero");
+    Shot* shotB = new Shot("Close-up on Hero");
     Shot* shotC = new Shot("Stunt jump");
 
     scene1->add(shotA);
     scene1->add(shotB);
 
-    // Stack two decorators on shotC before adding it - the decorated object
-    // is still usable as a plain ProductionUnit by the group that holds it
     ProductionUnit* decoratedShotC = new PriorityDecorator(new InsuranceDecorator(shotC, 500000.0));
     scene2->add(decoratedShotC);
 
@@ -37,31 +38,31 @@ int main() {
     seq->add(scene2);
     act->add(seq);
 
-    // ---- Move some shots through their lifecycle before we traverse ----
-    shotB->advance(); // Scripted -> Shooting (now urgent)
+    shotB->advance();
 
-    // ---- Two independent traversals over the same structure ----
+    std::cout << "== Morning production meeting: reviewing today's full schedule ==" << std::endl;
     ProductionIterator* full = act->createFullIterator();
-    printAll(full, "Full traversal");
+    int fullCount = printAll(full, "Full traversal");                          
 
     ProductionIterator* urgent = act->createUrgentIterator();
-    printAll(urgent, "Urgent-only traversal");
+    int urgentCount = printAll(urgent, "Urgent-only traversal");               
+    std::cout << urgentCount << " of " << fullCount 
+    << " things in the schedule need attention "
+    << "(groups and shots alike)." << std::endl;
 
-    // ---- Runtime structural change: shotA advances mid-way through, and we
-    //      re-run an urgent traversal to show the change is picked up ----
-    std::cout << std::endl << "shotA advances (Scripted -> Shooting)..." << std::endl;
+    std::cout << std::endl << "== Schedule has shifts: the establishing shot is being filmed earlier == " << std::endl;
     shotA->advance();
 
     ProductionIterator* urgentAfter = act->createUrgentIterator();
-    printAll(urgentAfter, "Urgent-only traversal AFTER change");
+    int urgentAfterCount = printAll(urgentAfter, "Urgent-only traversal AFTER change");   // optional, same pattern
+    std::cout << urgentAfterCount << " urgent after the schedule change." << std::endl;    // optional
 
-    // ---- Decorated unit participating in normal execution ----
-    std::cout << std::endl << "Executing the decorated stunt shot:" << std::endl;
+    std::cout << std::endl << "== Wrapping the day: the insured stunt jump goes ahead ==" << std::endl;
     decoratedShotC->execute();
 
     delete full;
     delete urgent;
     delete urgentAfter;
-    delete act; // owns seq -> scenes -> shots (including decoratedShotC), all cleaned up
+    delete act;
     return 0;
 }

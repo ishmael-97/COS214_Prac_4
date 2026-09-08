@@ -38,7 +38,7 @@ std::string ProductionGroup::getName() const { return this->name; }
 std::string ProductionGroup::getStatus() const {
     if (children.empty()) { return "Empty"; }
     // units -> children
-    return "Contains " + std::to_string(children.size()) + " units";
+    return name + ": contains " + std::to_string(children.size()) + " units";
 }
 
 // looks for units that need to be prioritized
