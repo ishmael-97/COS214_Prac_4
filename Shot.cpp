@@ -1,5 +1,5 @@
 #include "Shot.h"
-#include "ShotState.h"
+#include "Scripted.h"
 #include <iostream>
 
 // Every shot begins life freshly scripted
